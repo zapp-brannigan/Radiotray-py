@@ -1,0 +1,178 @@
+[
+    {
+        "group": "RadioPlay",
+        "stations": [
+            {
+                "name": "Kiss UK",
+                "url": "https://stream.on.revma.com/ncmp3k3knrhvv"
+            },
+            {
+                "name": "Kiss Fresh UK",
+                "url": "https://stream.on.revma.com/3q9pbv3knrhvv"
+            },
+            {
+                "name": "Kisstory UK",
+                "url": "https://stream.on.revma.com/rphnes3knrhvv"
+            },
+            {
+                "name": "Absolute Rock Classics",
+                "url": "https://stream.on.revma.com/wvef5r6knrhvv"
+            },
+            {
+                "name": "Absolute 80's",
+                "url": "https://stream.on.revma.com/vtaxxb6knrhvv"
+            },
+            {
+                "name": "Magic Soul",
+                "url": "https://stream.on.revma.com/50k926dst8tvv"
+            },
+            {
+                "name": "Planet Rock",
+                "url": "https://stream.on.revma.com/rcwcqu1urg0uv"
+            }
+        ]
+    },
+    {
+        "group": "Litt Radio",
+        "stations": [
+            {
+                "name": "Litt Hip-Hop X",
+                "url": "http://64.62.214.165/DASH90"
+            },
+            {
+                "name": "The City",
+                "url": "http://64.62.214.165/DASH2"
+            },
+            {
+                "name": "God's House of Hip-Hop",
+                "url": "http://64.62.214.165/DASH77?cb=1574064851"
+            },
+            {
+                "name": "Litt Dance X",
+                "url": "http://64.62.214.165/DASH81"
+            },
+            {
+                "name": "Discover",
+                "url": "http://64.62.214.165/DASH46"
+            },
+            {
+                "name": "Overdrive",
+                "url": "http://64.62.214.165/DASH73"
+            },
+            {
+                "name": "Independent Grind",
+                "url": "http://64.62.214.165/DASH8"
+            },
+            {
+                "name": "Southside",
+                "url": "http://64.62.214.165/DASH95"
+            },
+            {
+                "name": "The Cross",
+                "url": "http://64.62.214.165/DASH42"
+            },
+            {
+                "name": "Litt R&B X",
+                "url": "http://64.62.214.165/DASH47"
+            },
+            {
+                "name": "Dashville",
+                "url": "http://64.62.214.165/DASH82"
+            },
+            {
+                "name": "Smooth Jazz Radio",
+                "url": "http://64.62.214.165/DASH44"
+            },
+            {
+                "name": "Ratpack",
+                "url": "http://64.62.214.165/DASH5"
+            },
+            {
+                "name": "Doggystyle - 187.4 WBalls",
+                "url": "http://64.62.214.165/DASH78"
+            },
+            {
+                "name": "Snoop Dogg's Cadillacc Music",
+                "url": "http://64.62.214.165/DASH16"
+            },
+            {
+                "name": "Boomerang",
+                "url": "http://64.62.214.165/DASH39"
+            },
+            {
+                "name": "Pure Soul",
+                "url": "http://64.62.214.165/DASH36"
+            },
+            {
+                "name": "Swing",
+                "url": "http://64.62.214.165/DASH79"
+            }
+        ]
+    },
+    {
+        "group": "iHeart Radio",
+        "stations": [
+            {
+                "name": "iHeart Country Classics",
+                "url": "https://ample.revma.ihrhls.com/zc4435/16_r0nm8otwiyom02/playlist.m3u8"
+            },
+            {
+                "name": "Real Oldies",
+                "url": "https://ample.revma.ihrhls.com/zc4717/38_1hdt1m62c9nag02/playlist.m3u8"
+            },
+            {
+                "name": "Cool Oldies",
+                "url": "https://ample.revma.ihrhls.com/zc4439/31_1q36afuc4vz7d02/playlist.m3u8"
+            },
+            {
+                "name": "The Beat",
+                "url": "https://ample.revma.ihrhls.com/zc4429/16_bh1rkw91esvk02/playlist.m3u8"
+            },
+            {
+                "name": "Black Information Network",
+                "url": "https://ample.revma.ihrhls.com/zc8666/54_ogfejdcynfku02/playlist.m3u8"
+            }
+        ]
+    },
+    {
+        "group": "Various Stations",
+        "stations": [
+            {
+                "name": "Hot 97 (WQHT) NY",
+                "url": "https://19303.live.streamtheworld.com/WQHTFMAAC.aac"
+            },
+            {
+                "name": "Z100",
+                "url": "http://stream.revma.ihrhls.com/zc1469/hls.m3u8"
+            },
+            {
+                "name": "HOT 97.1 (WBHT-FM) PA",
+                "url": "https://playerservices.streamtheworld.com/pls/WBHTFM.pls"
+            },
+            {
+                "name": "Your Classical Radio",
+                "url": "https://ycradio.stream.publicradio.org/ycradio.aac"
+            },
+            {
+                "name": "New Dance Radio",
+                "url": "https://modspeedy.radioca.st/stream"
+            },
+            {
+                "name": "Dance Radio",
+                "url": "http://stream.danceradio.nl:9920/"
+            },
+            {
+                "name": "Heart Dance",
+                "url": "http://ice-sov.musicradio.com/HeartDance"
+            },
+            {
+                "name": "Sonik Vibe",
+                "url": "http://stream.dancewave.online:8080/dance.mp3"
+            },
+            {
+                "name": "Radio Anime",
+                "url": "http://radioanime.radioca.st/stream"
+            }
+        ]
+    }
+]
