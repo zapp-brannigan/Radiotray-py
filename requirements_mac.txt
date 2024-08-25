@@ -1,4 +1,0 @@
-pystray
-Pillow
-PySide2
-rumps
