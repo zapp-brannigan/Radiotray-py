@@ -4,8 +4,8 @@ Heavily inspired by the Linux app [Radiotray-NG](https://github.com/ebruck/radio
 I decided to write my own variant of the traditional Radiotray app when I started using Mac, where there were no app quite like it.  
 
 # Features and functionality 
-Radiotray-py features a robust bookmark editor, and stores the radio stations in bookmarks.json.  
-On Windows, Radiotray-py uses wmplayer.exe as its audio backend. On Mac, it uses AFPlay. And on Linux, BSD and others, it uses MPV.  
+Radiotray-py features a robust bookmark editor where you can add/remove and edit your radio stations, and stores the stations in bookmarks.json.  
+On Windows, Radiotray-py takes adventage of the built-in wmplayer.exe as its audio player backend. Mac uses AFPlay. And on Linux, BSD and others, MPV is being used to play your radio stations.  
 
 # Installation
 Clone the repository: git clone https://github.com/CHJ85/Radiotray-py.git  
