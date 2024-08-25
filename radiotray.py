@@ -2,10 +2,15 @@ import json
 import subprocess
 import sys
 import platform
-import pystray
 from PIL import Image, ImageDraw
-from pystray import MenuItem as Item, Menu
 from PySide2 import QtWidgets, QtGui, QtCore
+
+# Conditional imports for pystray and rumps
+if platform.system() == "Darwin":
+    import rumps
+else:
+    import pystray
+    from pystray import MenuItem as Item, Menu
 
 # Paths to your bookmarks.json and config.json files
 BOOKMARKS_FILE = "bookmarks.json"
@@ -52,7 +57,6 @@ def stop_current_station():
 def create_system_tray(menu_items):
     if platform.system() == "Darwin":
         # Create a menu bar icon on Mac using rumps
-        import rumps
         app = rumps.App("Radiotray-py", icon=red_waveform_icon)
         for item in menu_items:
             app.menu.add(item)
@@ -199,7 +203,6 @@ def generate_menu_items():
             )
         if platform.system() == "Darwin":
             # Create a rumps submenu on Mac
-            import rumps
             submenu = rumps.MenuItem(group["group"], submenu)
         else:
             # Create a pystray submenu on Linux and Windows
