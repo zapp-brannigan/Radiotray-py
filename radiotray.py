@@ -255,7 +255,7 @@ def play_station(url, name):
 
         # If the process is still running, we can assume it's playing.
         print("Playback started successfully.")
-
+        
         # Start the new, non-IPC metadata monitoring thread
         stop_event.clear()
         metadata_thread = threading.Thread(target=monitor_metadata, args=(url,), daemon=True)
@@ -307,6 +307,8 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
         super().__init__(*args, **kwargs)
         # Connect the signal to the menu update method
         self.update_menu.connect(self.build_and_set_menu)
+        # Connect the activated signal for left-click
+        self.activated.connect(self.on_icon_activated)
         self.song_title_action = None
         self.scrolling_timer = QtCore.QTimer(self)
         self.scrolling_timer.timeout.connect(self.update_scrolling_text)
@@ -315,6 +317,12 @@ class TrayIcon(QtWidgets.QSystemTrayIcon):
         self.full_song_text = ""
         self.setToolTip("Radio Tray")
         self.build_and_set_menu()
+
+    def on_icon_activated(self, reason):
+        """Handles tray icon activation events."""
+        # Toggle playback on left-click
+        if reason == self.Trigger:
+            toggle_playback()
 
     def update_scrolling_text(self):
         """Updates the song title action text to create a scrolling effect."""
