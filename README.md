@@ -12,10 +12,11 @@ Clone the repository: git clone https://github.com/CHJ85/Radiotray-py.git
 Install dependencies: python install_dependencies.py  
 Navigate to Radiotray-py: cd Radiotray-py  
 Launch the application using either "python3 ./radiotray.py" or "python ./radiotray.py" on Mac/Linux, or "py.exe ./radiotray.py" on Windows.
-You may now add RadioTray-py to your operating system's startup process.<br>
-&nbsp;&nbsp;Windows: 1. Create a .bat file with the full command inside: py.exe "C:\Path\To\radiotray.py". 2. Place the .bat file in the Startup folder ($\text{Win + R}$, then type shell:startup).<br>
-&nbsp;&nbsp;macOS: 1. Create a .sh (shell script) file with the command inside: python3 /Path/To/radiotray.py. 2. Go to System Settings $\rightarrow$ Users & Groups $\rightarrow$ Login Items and add the .sh file.<br>
-&nbsp;&nbsp;Linux: Search for Startup Applications (or AutoStart) in the application launcher, click Add, and enter the full command (i.e python3 /path/to/radiotray.py).
+You may now <details><summary> add RadioTray-py to your operating system's startup process.</summary>
+Windows: 1. Create a .bat file with the full command inside: py.exe "C:\Path\To\radiotray.py". 2. Place the .bat file in the Startup folder ($\text{Win + R}$, then type shell:startup).<br>
+macOS: 1. Create a .sh (shell script) file with the command inside: python3 /Path/To/radiotray.py. 2. Go to System Settings $\rightarrow$ Users & Groups $\rightarrow$ Login Items and add the .sh file.<br>
+Linux: Search for Startup Applications (or AutoStart) in the application launcher, click Add, and enter the full command (i.e python3 /path/to/radiotray.py).
+</details>
 
 # Usage
 Right-click to access the radio channels and the bookmark editor where you edit your channels list.
