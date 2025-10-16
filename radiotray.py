@@ -3,14 +3,7 @@ import subprocess
 import sys
 import platform
 from PIL import Image, ImageDraw
-from PySide2 import QtWidgets, QtGui, QtCore
-
-# Conditional imports for pystray and rumps
-if platform.system() == "Darwin":
-    import rumps
-else:
-    import pystray
-    from pystray import MenuItem as Item, Menu
+from PyQt5 import QtWidgets, QtGui, QtCore
 
 # Paths to your bookmarks.json and config.json files
 BOOKMARKS_FILE = "bookmarks.json"
@@ -19,7 +12,12 @@ CONFIG_FILE = "config.json"
 # Global variables to keep track of the current process and station info
 current_process = None
 current_station_name = None
-icon = None
+tray_icon = None
+red_waveform_icon = None
+green_waveform_icon = None
+
+# Global variable to hold the BookmarkEditor window instance
+bookmark_editor_window = None
 
 # Determine the appropriate command-line tool to use based on the operating system
 if platform.system() == "Windows":
@@ -41,10 +39,17 @@ def create_waveform_icon(color):
     ]
     draw.line(points, fill=color, width=2)
 
-    return image
+    # Convert PIL image to QPixmap
+    qimage = QtGui.QImage(
+        image.tobytes(), image.width, image.height, QtGui.QImage.Format_RGBA8888
+    )
+    return QtGui.QPixmap.fromImage(qimage)
 
-red_waveform_icon = create_waveform_icon("red")
-green_waveform_icon = create_waveform_icon("green")
+# Setup icons after the QApplication has been initialized
+def setup_icons():
+    global red_waveform_icon, green_waveform_icon
+    red_waveform_icon = create_waveform_icon("red")
+    green_waveform_icon = create_waveform_icon("green")
 
 # Stop the currently playing station, if any
 def stop_current_station():
@@ -52,33 +57,6 @@ def stop_current_station():
     if current_process:
         current_process.terminate()
         current_process = None
-
-# Define the system tray icon
-def create_system_tray(menu_items):
-    if platform.system() == "Darwin":
-        # Create a menu bar icon on Mac using rumps
-        app = rumps.App("Radiotray-py", icon=red_waveform_icon)
-        for item in menu_items:
-            app.menu.add(item)
-        app.menu.add(None)  # Add a separator
-        app.menu.add(rumps.MenuItem(" "))  # Add a line space
-        app.menu.add("Bookmark Editor", callback=open_bookmark_editor)
-        app.menu.add(None)  # Add a separator
-        app.menu.add("Exit", callback=exit_program)
-        return app
-    else:
-        # Create a system tray icon on Linux and Windows using pystray
-        menu = Menu(
-            Item("Toggle Playback", toggle_playback),
-            Item(" " * 4 + (current_station_name if current_station_name else ""), toggle_playback, enabled=False),
-            *menu_items,
-            Menu.SEPARATOR,  # Add a separator
-            Menu.SEPARATOR,  # Add a line space
-            Item("Bookmark Editor", open_bookmark_editor),
-            Menu.SEPARATOR,  # Add a separator
-            Item("Exit", exit_program)
-        )
-        return pystray.Icon("Radiotray-py", red_waveform_icon, "Radiotray-py", menu)
 
 # Read bookmarks from JSON file
 def read_bookmarks():
@@ -131,7 +109,7 @@ def play_station(url, name):
         print(f"Error: {player} is not installed. Please install {player}.")
 
 # Toggle playback on/off
-def toggle_playback(icon, item):
+def toggle_playback():
     global current_process, current_station_name
     if current_process:
         stop_current_station()
@@ -145,99 +123,67 @@ def toggle_playback(icon, item):
     update_tray_icon()  # Ensure the tray icon is updated correctly
 
 # Exit the program and clean up
-def exit_program(icon, item=None):
+def exit_program():
     stop_current_station()
-    if platform.system() == "Darwin":
-        # Exit the rumps application on Mac
-        rumps.quit_application()
-    else:
-        # Stop the pystray icon on Linux and Windows
-        icon.stop()
+    QtWidgets.QApplication.instance().quit()
     sys.exit()
 
 # Update the tray icon menu
 def update_tray_icon():
-    global icon
-    menu_items = generate_menu_items()
-    if platform.system() == "Darwin":
-        # Update the rumps menu on Mac
-        icon.clear()
-        for item in menu_items:
-            icon.menu.add(item)
-        icon.menu.add(None)  # Add a separator
-        icon.menu.add(rumps.MenuItem(" "))  # Add a line space
-        icon.menu.add("Bookmark Editor", callback=open_bookmark_editor)
-        icon.menu.add(None)  # Add a separator
-        icon.menu.add("Exit", callback=exit_program)
-    else:
-        # Update the pystray menu on Linux and Windows
-        menu = Menu(
-            Item("Toggle Playback", toggle_playback),
-            Item(" " * 4 + (current_station_name if current_station_name else "No Station Playing"), toggle_playback, enabled=False),
-            *menu_items,
-            Menu.SEPARATOR,  # Add a separator
-            Menu.SEPARATOR,  # Add a line space
-            Item("Bookmark Editor", open_bookmark_editor),
-            Menu.SEPARATOR,  # Add a separator
-            Item("Exit", exit_program)
-        )
-        icon.menu = menu  # Update the menu of the tray icon
+    global tray_icon
+    menu = QtWidgets.QMenu()
+
+    # Toggle Playback action
+    toggle_action = QtWidgets.QAction("Toggle Playback", menu)
+    toggle_action.triggered.connect(toggle_playback)
+    menu.addAction(toggle_action)
+
+    # Current station action (disabled)
+    current_station_action = QtWidgets.QAction(
+        " " * 4 + (current_station_name if current_station_name else "No Station Playing"), menu
+    )
+    current_station_action.setEnabled(False)
+    menu.addAction(current_station_action)
+
+    # Station bookmarks
+    bookmarks = read_bookmarks()
+    for group in bookmarks:
+        group_menu = menu.addMenu(group["group"])
+        for station in group["stations"]:
+            play_action = QtWidgets.QAction(station["name"], group_menu)
+            play_action.triggered.connect(
+                lambda checked, url=station["url"], name=station["name"]: play_station(url, name)
+            )
+            group_menu.addAction(play_action)
+
+    menu.addSeparator()
+
+    # Bookmark Editor action
+    editor_action = QtWidgets.QAction("Bookmark Editor", menu)
+    editor_action.triggered.connect(open_bookmark_editor)
+    menu.addAction(editor_action)
+
+    menu.addSeparator()
+
+    # Exit action
+    exit_action = QtWidgets.QAction("Exit", menu)
+    exit_action.triggered.connect(exit_program)
+    menu.addAction(exit_action)
+
+    tray_icon.setContextMenu(menu)
 
     # Update the tray icon image based on playback status
     if current_process:
-        icon.icon = green_waveform_icon
+        tray_icon.setIcon(QtGui.QIcon(green_waveform_icon))
     else:
-        icon.icon = red_waveform_icon
-
-# Generate menu items from bookmarks
-def generate_menu_items():
-    bookmarks = read_bookmarks()
-    menu_items = []
-    for group in bookmarks:
-        submenu = []
-        for station in group["stations"]:
-            submenu.append(
-                Item(
-                    station["name"], create_play_function(station["url"], station["name"])
-                )
-            )
-        if platform.system() == "Darwin":
-            # Create a rumps submenu on Mac
-            submenu = rumps.MenuItem(group["group"], submenu)
-        else:
-            # Create a pystray submenu on Linux and Windows
-            submenu = Menu(*submenu)
-        menu_items.append(Item(group["group"], submenu))
-    return menu_items
-
-# Wrapper function to capture the station URL
-def create_play_function(url, name):
-    return lambda: play_station(url, name)
-
-# Create the system tray icon
-def main():
-    global icon
-    last_station, last_station_name = load_last_station()
-    if last_station:
-        global current_station_name
-        current_station_name = last_station_name  # Restore the last station name
-    menu_items = generate_menu_items()
-    icon = create_system_tray(menu_items)
-    if platform.system() == "Darwin":
-        # Run the rumps application on Mac
-        icon.run()
-    else:
-        # Run the pystray icon on Linux and Windows
-        icon.run()
+        tray_icon.setIcon(QtGui.QIcon(red_waveform_icon))
 
 # Open the bookmark editor GUI
-def open_bookmark_editor(icon, item=None):
-    app = QtWidgets.QApplication.instance()
-    if not app:
-        app = QtWidgets.QApplication(sys.argv)
-    editor = BookmarkEditor()
-    editor.show()
-    app.exec_()
+def open_bookmark_editor():
+    global bookmark_editor_window
+    if bookmark_editor_window is None:
+        bookmark_editor_window = BookmarkEditor()
+    bookmark_editor_window.show()
 
 # GUI for editing bookmarks
 class BookmarkEditor(QtWidgets.QWidget):
@@ -557,6 +503,20 @@ class BookmarkEditor(QtWidgets.QWidget):
         moved_station = self.current_category["stations"].pop(sourceStart)
         self.current_category["stations"].insert(destinationRow, moved_station)
         self.changes_made = True
+
+# Main application entry point
+def main():
+    global tray_icon
+    app = QtWidgets.QApplication(sys.argv)
+    app.setQuitOnLastWindowClosed(False)
+
+    setup_icons()
+
+    tray_icon = QtWidgets.QSystemTrayIcon()
+    tray_icon.setVisible(True)
+
+    update_tray_icon()
+    sys.exit(app.exec_())
 
 if __name__ == "__main__":
     main()
