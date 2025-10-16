@@ -13,6 +13,6 @@ Install dependencies: python install_dependencies.py
 Navigate to Radiotray-py: cd Radiotray-py  
 python ./radiotray.py  
 
-# Roadmap
-Streamlining Mac support, as Rumps can be a hassle to set up.  
-Adding Windows support
+# Usage
+Right-click to access the radio channels and the bookmark editor where you edit your channels list.
+Left-click toggles playback on/off.
