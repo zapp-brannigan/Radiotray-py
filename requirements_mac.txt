@@ -1,2 +1,0 @@
-# All of Radiotray-py's dependencies are now fully cross-platform.
- 
