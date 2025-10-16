@@ -69,7 +69,7 @@ def stop_current_station():
         print("Stopping current process.")
         current_process.terminate()
         stop_event.set()
-        if metadata_thread:
+        if metadata_thread and metadata_thread.is_alive():
             metadata_thread.join(timeout=2)
         current_process = None
         metadata_thread = None
@@ -224,6 +224,18 @@ def play_station(url, name):
     try:
         print(f"Playing station: {name} ({url})")
 
+        # Pre-flight check to see if the stream URL is accessible
+        try:
+            response = requests.get(url, stream=True, timeout=5)
+            if response.status_code != 200:
+                print(f"Error: Could not connect to stream for '{name}'. Status code: {response.status_code}")
+                tray_icon.update_menu.emit()
+                return
+        except requests.exceptions.RequestException as e:
+            print(f"Error: Could not connect to stream for '{name}'. {e}")
+            tray_icon.update_menu.emit()
+            return
+
         # Launch player
         cmd = [player, url]
         if platform.system() != "Windows":
@@ -231,8 +243,18 @@ def play_station(url, name):
 
         current_process = subprocess.Popen(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
-        # Add a short delay to allow the process to start and metadata thread to initiate its first poll
-        time.sleep(3)
+        # Add a short delay to allow the process to start or fail
+        time.sleep(2)
+
+        # Check if the process has already terminated (i.e., failed to play)
+        if current_process.poll() is not None:
+            print(f"Error: Player process for '{name}' terminated unexpectedly. The stream might be down.")
+            current_process = None  # Ensure it's None so the icon stays red
+            tray_icon.update_menu.emit()
+            return  # Stop further execution
+
+        # If the process is still running, we can assume it's playing.
+        print("Playback started successfully.")
 
         # Start the new, non-IPC metadata monitoring thread
         stop_event.clear()
@@ -242,10 +264,15 @@ def play_station(url, name):
         save_last_station(url, name)
         current_station_name = name
         tray_icon.update_menu.emit()
+
     except FileNotFoundError:
         print(f"Error: {player} is not installed. Please install {player} for this feature.")
+        current_process = None
+        tray_icon.update_menu.emit()
     except Exception as e:
         print(f"An unexpected error occurred while trying to play: {e}")
+        current_process = None
+        tray_icon.update_menu.emit()
 
 # Toggle playback on/off
 def toggle_playback():
