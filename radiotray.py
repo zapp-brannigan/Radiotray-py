@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import json
 import subprocess
 import sys
@@ -40,8 +41,6 @@ stop_event = threading.Event()
 
 # Global variable to hold the BookmarkEditor window instance
 bookmark_editor_window = None
-
-
 
 # Function to create waveform icons
 def create_waveform_icon(color):
@@ -783,4 +782,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
