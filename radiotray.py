@@ -10,7 +10,21 @@ import re
 from PIL import Image, ImageDraw
 from PyQt5 import QtWidgets, QtGui, QtCore
 
+# Determine the appropriate command-line tool to use and the config-directory based on the operating system
+if platform.system() == "Windows":
+    player = "wmplayer.exe"
+    CONFDIR = os.environ["APPDATA"] + "/radiotray-py"
+elif platform.system() == "Darwin":
+    player = "afplay"
+    CONFDIR = os.environ["HOME"] + "/.config/radiotray-py"
+else:
+    player = "mpv"
+    CONFDIR = os.environ["HOME"] + "/.config/radiotray-py"
+    
 # Paths to your bookmarks.json and config.json files
+if not os.path.exists(CONFDIR):
+    os.makedirs(CONFDIR)
+os.chdir(CONFDIR)
 BOOKMARKS_FILE = "bookmarks.json"
 CONFIG_FILE = "config.json"
 
@@ -27,13 +41,7 @@ stop_event = threading.Event()
 # Global variable to hold the BookmarkEditor window instance
 bookmark_editor_window = None
 
-# Determine the appropriate command-line tool to use based on the operating system
-if platform.system() == "Windows":
-    player = "wmplayer.exe"
-elif platform.system() == "Darwin":
-    player = "afplay"
-else:
-    player = "mpv"
+
 
 # Function to create waveform icons
 def create_waveform_icon(color):
@@ -775,3 +783,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
